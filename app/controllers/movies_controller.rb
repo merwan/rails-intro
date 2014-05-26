@@ -8,20 +8,22 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    @sort_column = params[:sort]
     if params[:ratings]
       @ratings = params[:ratings].keys
+    elsif session[:ratings]
+      @ratings = session[:ratings]
     else
       @ratings = @all_ratings
     end
 
-    if @sort_column == 'title'
-      @movies = Movie.order(:title)
-    elsif @sort_column == 'release_date'
-      @movies = Movie.order(:release_date)
-    else
-      @movies = Movie.find_all_by_rating(@ratings)
-    end
+    @movies = Movie.readonly
+    @sort_column = params[:sort] || session[:sort]
+    @movies = @movies.order(:title)  if @sort_column == 'title' 
+    @movies = @movies.order(:release_date)if @sort_column == 'release_date'
+    @movies = @movies.find_all_by_rating(@ratings)
+
+    session[:ratings] = @ratings
+    session[:sort] = @sort_column
   end
 
   def new
