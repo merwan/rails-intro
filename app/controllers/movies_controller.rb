@@ -29,6 +29,7 @@ class MoviesController < ApplicationController
       params[:ratings] = session[:ratings]
       params[:sort] = session[:sort]
       flash[:was_redirected] = true
+      flash.keep
       redirect_to :action => :index, :sort => session[:sort], :ratings => session[:ratings]
     end
   end
