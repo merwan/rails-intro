@@ -13,7 +13,7 @@ class MoviesController < ApplicationController
     elsif session[:ratings]
       @ratings = session[:ratings]
     else
-      @ratings = @all_ratings.map { |m| { m => 'on' } }
+      @ratings = Hash[*@all_ratings.map { |m| [m, 'on']}.flatten]
     end
 
     @movies = Movie.readonly
