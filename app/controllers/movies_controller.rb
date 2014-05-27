@@ -9,18 +9,18 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     if params[:ratings]
-      @ratings = params[:ratings].keys
+      @ratings = params[:ratings]
     elsif session[:ratings]
       @ratings = session[:ratings]
     else
-      @ratings = @all_ratings
+      @ratings = @all_ratings.map { |m| { m => 'on' } }
     end
 
     @movies = Movie.readonly
     @sort_column = params[:sort] || session[:sort]
     @movies = @movies.order(:title)  if @sort_column == 'title' 
     @movies = @movies.order(:release_date)if @sort_column == 'release_date'
-    @movies = @movies.find_all_by_rating(@ratings)
+    @movies = @movies.find_all_by_rating(@ratings.keys)
 
     session[:ratings] = @ratings
     session[:sort] = @sort_column
@@ -29,7 +29,7 @@ class MoviesController < ApplicationController
       params[:ratings] = session[:ratings]
       params[:sort] = session[:sort]
       flash[:was_redirected] = true
-      redirect_to :action => :index, :sort => session[:sort]
+      redirect_to :action => :index, :sort => session[:sort], :ratings => session[:ratings]
     end
   end
 
