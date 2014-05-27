@@ -24,6 +24,13 @@ class MoviesController < ApplicationController
 
     session[:ratings] = @ratings
     session[:sort] = @sort_column
+
+    if !params[:ratings] and !params[:sort] and !flash[:was_redirected]
+      params[:ratings] = session[:ratings]
+      params[:sort] = session[:sort]
+      flash[:was_redirected] = true
+      redirect_to :action => :index, :sort => session[:sort]
+    end
   end
 
   def new
